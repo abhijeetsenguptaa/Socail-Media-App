@@ -7,14 +7,17 @@ const postSchema = mongoose.Schema({
     text: String,
     image: String,
     createdAt: {
-        type : Date,
-        default : Date.now
+        type: Date,
+        default: Date.now
     },
     likes: [String],                                 //user-id of the users
     comments: [{                                     //user-id of the users
         userID: String,
         text: String,
-        createdAt: Date
+        createdAt: {
+            type: Date,
+            default: Date.now
+        }
     }]
 }, {
     versionKey: false
