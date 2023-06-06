@@ -118,13 +118,17 @@ port: to listen the server.
 
 **Method:** POST\
 **Responses**\
+
+```
 {
     200 (OK) : {msg : You have posted a new Post.}\
     500 (Not Found) : {msg: 'Error in posting a new Post.'}
 }
+```
 
 **Parameters:**
 
+```
 {
     userID : String,
     text : String,
@@ -133,5 +137,6 @@ port: to listen the server.
     likes : [ {type : id , ref : 'users'}],
     comments : [{id : {type : id , ref : 'users},text : String , createdAt : Date}]
 }
+```
 
 ---

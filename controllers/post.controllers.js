@@ -35,7 +35,7 @@ async function fetchingSpecificPost(req, res) {
 async function postingNewPost(req, res) {
     try {
         const { userID, text, image, createdAt, likes, comments } = req.body;
-        const newPost = new PostModel({ userID, text, image, createdAt, likes, comments });
+        const newPost = new PostModel({ user : userID, text, image, createdAt, likes, comments });
         await newPost.save();
         res.status(200).send({
             status: true,
@@ -110,7 +110,7 @@ async function commentingOnPost(req, res) {
     try {
         const { userID, text, createdAt } = req.body;
         const id = req.params.id;
-        const data = await PostModel.updateOne({ _id: id }, { $push: { comments: { userID, text, createdAt } } });
+        const data = await PostModel.updateOne({ _id: id }, { $push: { comments: { user : userID, text, createdAt } } });
         res.status(200).send({
             status: true,
             msg: 'You have commented on a Post!',

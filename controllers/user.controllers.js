@@ -75,7 +75,7 @@ async function loggingUser(req, res) {
 
 async function fetchingRegisteredUser(req, res) {
     try {
-        const users = await UserModel.aggregate([{ $lookup: { from: "posts", localField: "_id", foreignField: "userID", as: "posts" } }])
+        const users = await UserModel.aggregate([{ $lookup: { from: 'posts', localField: '_id', foreignField: 'user', as: 'posts' } }]);
         res.status(200).send({
             status: true,
             msg: 'List of all the registered Users.',

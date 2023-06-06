@@ -3,16 +3,16 @@ const mongoose = require('mongoose');
 
 
 const postSchema = mongoose.Schema({
-    userID: String,
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
     text: String,
     image: String,
     createdAt: {
         type: Date,
         default: Date.now
     },
-    likes: [String],                                 //user-id of the users
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }],                                 //user-id of the users
     comments: [{                                     //user-id of the users
-        userID: String,
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
         text: String,
         createdAt: {
             type: Date,

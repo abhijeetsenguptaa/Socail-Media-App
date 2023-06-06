@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 
+const postSchema = {
+    type : mongoose.Schema.Types.ObjectId,
+    ref : 'posts'
+}
 
 const userSchema = mongoose.Schema({
     name: String,
@@ -7,9 +11,9 @@ const userSchema = mongoose.Schema({
     password: String,
     dob: Date,
     bio: String,
-    posts: [String],                                   //post-id from the posts
-    friends: [String],                                 //user-id of the users
-    friendRequests: [String]                           //user-id of the users
+    posts: [postSchema],                                                                            //post-id from the posts
+    friends: [{type : mongoose.Schema.Types.ObjectId,ref:'users'}],                                 //user-id of the users
+    friendRequests: [{type : mongoose.Schema.Types.ObjectId,ref:'users'}]                           //user-id of the users
 },{
     versionKey : false
 })
