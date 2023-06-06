@@ -36,7 +36,7 @@ userRoute.post('/register', async (req, res) => {
     }
 })
 
-
+// This route will be used to log in the registered User.
 userRoute.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -68,6 +68,28 @@ userRoute.post('/login', async (req, res) => {
         res.status(404).send({
             status: false,
             msg: 'Error in logging In.'
+        })
+    }
+})
+// This route will be used to log in the registered User.
+
+// This route will be used to send the friend request to the other user.
+
+// This route will be used to send the friend request to the other user.
+
+// This route will be used to get all the registered Users.
+userRoute.get('/users', async (req, res) => {
+    try {
+        const users = await UserModel.find();
+        res.status(200).send({
+            status: true,
+            msg: 'List of all the registered Users.',
+            data: users
+        })
+    } catch {
+        res.status(501).send({
+            status: false,
+            msg: 'Error in fetching the data of the Registered Users.'
         })
     }
 })

@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const { connection } = require('./configs/connection');
 const { userRoute } = require('./routes/user.route');
+const { postRoute } = require('./routes/post.route');
 
 
 
@@ -22,7 +23,7 @@ app.get('/', async (req, res) => {
 
 
 app.use('/api', userRoute);
-
+app.use('/api', postRoute);
 
 app.listen(PORT, async () => {
     try {
