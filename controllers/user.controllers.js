@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
 const { UserModel } = require('../models/user.model');
+const { PostModel } = require('../models/post.model');
 
 
 
@@ -74,7 +75,7 @@ async function loggingUser(req, res) {
 
 async function fetchingRegisteredUser(req, res) {
     try {
-        const users = await UserModel.find();
+        const users = await UserModel.aggregate([{ $lookup: { from: "posts", localField: "_id", foreignField: "userID", as: "posts" } }])
         res.status(200).send({
             status: true,
             msg: 'List of all the registered Users.',
@@ -88,6 +89,59 @@ async function fetchingRegisteredUser(req, res) {
     }
 }
 
+async function fetchingFriendsList(req, res) {
+    try {
+        const id = req.params.id;
+        const data = await UserModel.find({ _id: id });
+        res.status(200).send({
+            status: true,
+            msg: "Your Complete Friend List.",
+            data: data[0].friends
+        })
+    } catch {
+        res.status(500).send({
+            status: false,
+            msg: 'Error in fetching the friends List.'
+        })
+    }
+}
 
 
-module.exports = { registeringUser, loggingUser, fetchingRegisteredUser };
+async function sendFriendRequest(req, res) {
+    try {
+        const id = req.params.id;
+        const user = await UserModel.find({ _id: id });
+        const userName = user[0].name;
+        const { userID } = req.body;
+        await UserModel.updateOne({ _id: id }, { $push: { friendRequests: userID } });
+        res.status(200).send({
+            status: true,
+            msg: `You have send a friend Request to ${userName}`
+        })
+    } catch {
+        res.status(500).send({
+            status: false,
+            msg: 'Error in sending a friend Request.'
+        })
+    }
+}
+
+async function acceptingFriendRequest(req, res) {
+    try {
+        const id = req.params.id;
+        const friendsId = req.params.friendId;
+        await UserModel.updateOne({ _id: id }, { $push: { friends: friendsId } });
+        await UserModel.updateOne({ _id: friendsId }, { $push: { friends: id } });
+        await UserModel.updateOne({ _id: id }, { $pull: { friendRequests: friendsId } });
+        res.status(200).send({
+            status: true,
+            msg: 'You have accepted the friend Request.'
+        })
+    } catch {
+        res.status(500).send({
+            status: false,
+            msg: 'Error in accepting the friend Request'
+        })
+    }
+}
+module.exports = { registeringUser, loggingUser, fetchingRegisteredUser, fetchingFriendsList, sendFriendRequest, acceptingFriendRequest };

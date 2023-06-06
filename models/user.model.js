@@ -10,8 +10,8 @@ const userSchema = mongoose.Schema({
     posts: [String],                                   //post-id from the posts
     friends: [String],                                 //user-id of the users
     friendRequests: [String]                           //user-id of the users
-}, {
-    versionKey: false
+},{
+    versionKey : false
 })
 
 
