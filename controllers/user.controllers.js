@@ -113,11 +113,27 @@ async function sendFriendRequest(req, res) {
         const user = await UserModel.find({ _id: id });
         const userName = user[0].name;
         const { userID } = req.body;
-        await UserModel.updateOne({ _id: id }, { $push: { friendRequests: userID } });
-        res.status(200).send({
-            status: true,
-            msg: `You have send a friend Request to ${userName}`
-        })
+        const isFriends = user[0].friends.includes(userID);
+        const isFriendRequest = user[0].friendRequests.includes(userID);
+        if (isFriends) {
+            res.status(201).send({
+                status: false,
+                msg: `You are already friends with ${userName}`
+            })
+        }
+        if (isFriendRequest) {
+            res.status(201).send({
+                status: false,
+                msg: `You have already send the friend request to ${userName}`
+            })
+        }
+        if (!isFriends && !isFriendRequest) {
+            await UserModel.updateOne({ _id: id }, { $push: { friendRequests: userID } });
+            res.status(200).send({
+                status: true,
+                msg: `You have send a friend Request to ${userName}`
+            })
+        }
     } catch {
         res.status(500).send({
             status: false,
