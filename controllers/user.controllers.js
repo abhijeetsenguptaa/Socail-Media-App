@@ -146,13 +146,24 @@ async function acceptingFriendRequest(req, res) {
     try {
         const id = req.params.id;
         const friendsId = req.params.friendId;
-        await UserModel.updateOne({ _id: id }, { $push: { friends: friendsId } });
-        await UserModel.updateOne({ _id: friendsId }, { $push: { friends: id } });
-        await UserModel.updateOne({ _id: id }, { $pull: { friendRequests: friendsId } });
-        res.status(200).send({
-            status: true,
-            msg: 'You have accepted the friend Request.'
-        })
+        const user = await UserModel.find({ _id: friendsId });
+        const isFriends = user[0].friends.includes(id);
+        if (isFriends) {
+            await UserModel.updateOne({ _id: id }, { $pull: { friends: friendsId } })
+            await UserModel.updateOne({ _id: friendsId }, { $pull: { friends: id } })
+            res.status(200).send({
+                status : true,
+                msg : `You have removed ${user[0].name} from your friend list.`
+            })
+        } else {
+            await UserModel.updateOne({ _id: id }, { $push: { friends: friendsId } });
+            await UserModel.updateOne({ _id: friendsId }, { $push: { friends: id } });
+            await UserModel.updateOne({ _id: id }, { $pull: { friendRequests: friendsId } });
+            res.status(200).send({
+                status: true,
+                msg: 'You have accepted the friend Request.'
+            })
+        }
     } catch {
         res.status(500).send({
             status: false,
